@@ -1,19 +1,18 @@
-
+import { Suspense } from 'react'
+import { Loader } from '@react-three/drei'
+import { R3FCanvas } from './canvas/canvas'
+import { MainScene } from './scenes'
 import './App.css'
-import { HeroUIProviderComponent } from './providers/HeroUIProvider'
 
-
-function App() {
-
+export default function App() {
   return (
     <>
-      <HeroUIProviderComponent>
-        <div>
-          <h1>HeroUI</h1>
-        </div>
-      </HeroUIProviderComponent>
+      <R3FCanvas>
+        <Suspense fallback={null}>
+          <MainScene />
+        </Suspense>
+      </R3FCanvas>
+      <Loader />
     </>
   )
 }
-
-export default App

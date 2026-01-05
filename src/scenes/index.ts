@@ -1,0 +1,2 @@
+export { MainScene } from './MainScene'
+
