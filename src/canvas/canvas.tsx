@@ -5,10 +5,15 @@ import type { WebGPURendererParameters } from 'three/src/renderers/webgpu/WebGPU
 export const R3FCanvas = ({ children }: { children: React.ReactNode }) => {
   return (
     <Canvas
+    shadows
     gl={(props) => {
       extend({ WebGPURenderer: THREE.WebGPURenderer })
       const gpuProps = { ...props, antialias: false } as WebGPURendererParameters
       const renderer = new THREE.WebGPURenderer(gpuProps)
+      renderer.toneMapping = THREE.ACESFilmicToneMapping
+      renderer.toneMappingExposure = 1.25
+      renderer.outputColorSpace = THREE.SRGBColorSpace
+      renderer.shadowMap.enabled = true
       return renderer.init().then(() => renderer)
     }}
     dpr={[1, 1.5]}

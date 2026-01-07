@@ -16,7 +16,12 @@ export function Effects() {
   const [postProcessing] = useState(() => new THREE.PostProcessing(gl as unknown as THREE.WebGPURenderer))
 
   // グローバルエフェクト切り替え
-  const { effects } = useControls({ effects: true })
+  const { effects, bloomThreshold, bloomStrength, bloomRadius } = useControls({
+    effects: true,
+    bloomThreshold: { value: 0.15, min: 0, max: 1, step: 0.01 },
+    bloomStrength: { value: 1.05, min: 0, max: 3, step: 0.01 },
+    bloomRadius: { value: 0.85, min: 0, max: 1, step: 0.01 }
+  })
 
   // 各エフェクトのコントロール
   const ssrConfig = useSSRControls()
@@ -31,7 +36,11 @@ export function Effects() {
     const ssgiResult = createSSGIPass(textures, camera, ssgiConfig)
 
     // 2. Bloom
-    const bloomPass = createBloomPass(ssgiResult.composited)
+    const bloomPass = createBloomPass(ssgiResult.composited, {
+      threshold: bloomThreshold,
+      strength: bloomStrength,
+      radius: bloomRadius
+    })
 
     // 3. Bloom合成
     const withBloom = ssgiResult.composited.add(bloomPass)
@@ -48,7 +57,7 @@ export function Effects() {
     // eslint-disable-next-line react-hooks/immutability
     postProcessing.outputNode = finalPass
     postProcessing.needsUpdate = true
-  }, [textures, camera, ssrConfig, ssgiConfig, postProcessing])
+  }, [textures, camera, ssrConfig, ssgiConfig, bloomThreshold, bloomStrength, bloomRadius, postProcessing])
 
   // レンダリング
   useFrame(() => effects && postProcessing.render(), effects ? 1 : 0)
